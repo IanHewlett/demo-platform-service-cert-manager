@@ -1,0 +1,36 @@
+installCRDs: true
+featureGates: "ExperimentalCertificateSigningRequestControllers=true"
+securityContext:
+  enabled: true
+  fsGroup: 1001
+nodeSelector:
+  nodegroup: "management-nodes"
+tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "management"
+    effect: "NoSchedule"
+cainjector:
+  nodeSelector:
+    nodegroup: "management-nodes"
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "management"
+      effect: "NoSchedule"
+webhook:
+  nodeSelector:
+    nodegroup: "management-nodes"
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "management"
+      effect: "NoSchedule"
+startupapicheck:
+  nodeSelector:
+    nodegroup: "management-nodes"
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "management"
+      effect: "NoSchedule"
