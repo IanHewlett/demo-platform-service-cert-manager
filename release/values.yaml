@@ -1,34 +1,104 @@
 installCRDs: true
-featureGates: "ExperimentalCertificateSigningRequestControllers=true"
+#featureGates: "ExperimentalCertificateSigningRequestControllers=true"
+
+#serviceAccount:
+#  annotations:
+#    "eks.amazonaws.com/role-arn": ""
+
+replicaCount: 3
+
+strategy:
+  type: "RollingUpdate"
+  rollingUpdate:
+    maxSurge: 0
+    maxUnavailable: 1
+
 securityContext:
   enabled: true
   fsGroup: 1001
+
 nodeSelector:
   nodegroup: "management-nodes"
+
 tolerations:
   - key: "dedicated"
     operator: "Equal"
     value: "management"
     effect: "NoSchedule"
+
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+            - key: app.kubernetes.io/name
+              operator: In
+              values:
+                - cert-manager
+        topologyKey: topology.kubernetes.io/zone
+
 cainjector:
+  replicaCount: 3
+
+  strategy:
+    type: "RollingUpdate"
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+
   nodeSelector:
     nodegroup: "management-nodes"
+
   tolerations:
     - key: "dedicated"
       operator: "Equal"
       value: "management"
       effect: "NoSchedule"
+
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - cainjector
+          topologyKey: topology.kubernetes.io/zone
+
 webhook:
+  replicaCount: 3
+
+  strategy:
+    type: "RollingUpdate"
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+
   nodeSelector:
     nodegroup: "management-nodes"
+
   tolerations:
     - key: "dedicated"
       operator: "Equal"
       value: "management"
       effect: "NoSchedule"
+
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - webhook
+          topologyKey: topology.kubernetes.io/zone
+
 startupapicheck:
   nodeSelector:
     nodegroup: "management-nodes"
+
   tolerations:
     - key: "dedicated"
       operator: "Equal"
